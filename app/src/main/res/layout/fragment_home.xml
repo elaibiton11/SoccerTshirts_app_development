@@ -19,4 +19,11 @@
         android:layout_marginTop="16dp"
         android:text="Welcome to the main screen!" />
 
+    <Button
+        android:id="@+id/btn_logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Logout" />
+
 </LinearLayout>
