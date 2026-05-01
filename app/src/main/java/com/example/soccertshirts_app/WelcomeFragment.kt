@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.soccertshirts_app.databinding.FragmentWelcomeBinding
+import com.google.firebase.auth.FirebaseAuth
 
 class WelcomeFragment : Fragment() {
 
@@ -24,11 +25,16 @@ class WelcomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser != null) {
+            findNavController().navigate(R.id.action_welcomeFragment_to_homeFragment)
+        }
+
         binding.btnToLogin.setOnClickListener {
             findNavController().navigate(R.id.action_welcomeFragment_to_loginFragment)
         }
-        
+
         binding.btnToRegister.setOnClickListener {
             findNavController().navigate(R.id.action_welcomeFragment_to_registerFragment)
         }
