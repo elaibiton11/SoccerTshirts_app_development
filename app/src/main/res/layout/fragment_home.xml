@@ -20,10 +20,17 @@
         android:text="Welcome to the main screen!" />
 
     <Button
-        android:id="@+id/btn_logout"
+        android:id="@+id/btn_add_jersey"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
+        android:text="Add Jersey" />
+
+    <Button
+        android:id="@+id/btn_logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="Logout" />
 
 </LinearLayout>

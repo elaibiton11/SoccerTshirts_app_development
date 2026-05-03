@@ -26,6 +26,10 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.btnAddJersey.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_addEditJerseyFragment)
+        }
+
         binding.btnLogout.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
             findNavController().navigate(R.id.action_homeFragment_to_welcomeFragment)
