@@ -57,6 +57,15 @@
             app:destination="@id/welcomeFragment"
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_homeFragment_to_addEditJerseyFragment"
+            app:destination="@id/addEditJerseyFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/addEditJerseyFragment"
+        android:name="com.example.soccertshirts_app.AddEditJerseyFragment"
+        android:label="Add Jersey"
+        tools:layout="@layout/fragment_add_edit_jersey" />
 
 </navigation>
