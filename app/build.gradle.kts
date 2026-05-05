@@ -49,8 +49,10 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
 
     // Navigation
-    implementation(libs.androidx.navigation.fragment.ktx)
+// Navigation
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
+
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
@@ -60,6 +62,10 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
+
+    // Cloudinary & Coil
+    implementation(libs.cloudinary.android)
+    implementation(libs.coil)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
