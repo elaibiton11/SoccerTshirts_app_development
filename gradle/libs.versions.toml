@@ -12,6 +12,8 @@ constraintlayout = "2.2.1"
 navigation = "2.8.8"
 googleServices = "4.4.2"
 firebaseBom = "33.9.0"
+room = "2.6.1"
+ksp = "2.0.21-1.0.27"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -27,9 +29,13 @@ androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 androidx-navigation-safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
