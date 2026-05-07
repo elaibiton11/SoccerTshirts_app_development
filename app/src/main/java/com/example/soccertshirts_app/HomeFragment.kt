@@ -23,6 +23,7 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val db = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
     private lateinit var adapter: JerseyAdapter
 
     override fun onCreateView(
@@ -46,15 +47,46 @@ class HomeFragment : Fragment() {
         }
 
         binding.btnLogout.setOnClickListener {
-            FirebaseAuth.getInstance().signOut()
+            auth.signOut()
             findNavController().navigate(R.id.action_homeFragment_to_welcomeFragment)
         }
     }
 
     private fun setupRecyclerView() {
-        adapter = JerseyAdapter(emptyList())
+        val currentUserId = auth.currentUser?.uid
+        adapter = JerseyAdapter(
+            jerseys = emptyList(),
+            currentUserId = currentUserId,
+            onEditClick = { jersey ->
+                val action = HomeFragmentDirections.actionHomeFragmentToAddEditJerseyFragment(jersey.id)
+                findNavController().navigate(action)
+            },
+            onDeleteClick = { jersey ->
+                deleteJersey(jersey)
+            }
+        )
         binding.rvJerseys.layoutManager = LinearLayoutManager(requireContext())
         binding.rvJerseys.adapter = adapter
+    }
+
+    private fun deleteJersey(jersey: Jersey) {
+        // Delete from Firestore
+        db.collection("jerseys").document(jersey.id)
+            .delete()
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "Jersey deleted", Toast.LENGTH_SHORT).show()
+                
+                // Delete from Room
+                val jerseyDao = AppDatabase.getDatabase(requireContext()).jerseyDao()
+                lifecycleScope.launch {
+                    jerseyDao.deleteById(jersey.id)
+                    // Refresh data
+                    fetchJerseysFromFirestore()
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun loadLocalData() {
@@ -98,6 +130,7 @@ class HomeFragment : Fragment() {
             )
         }
         lifecycleScope.launch {
+            jerseyDao.deleteAll() // Clear local cache to sync with remote
             jerseyDao.insertAll(entities)
         }
     }

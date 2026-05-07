@@ -18,6 +18,9 @@ interface JerseyDao {
     @Query("SELECT * FROM jerseys ORDER BY createdAt DESC")
     suspend fun getAllJerseys(): List<JerseyEntity>
 
+    @Query("DELETE FROM jerseys WHERE id = :id")
+    suspend fun deleteById(id: String)
+
     @Query("DELETE FROM jerseys")
     suspend fun deleteAll()
 }
