@@ -13,5 +13,6 @@ data class JerseyEntity(
     val price: Double,
     val description: String,
     val imageUrl: String,
-    val ownerId: String
+    val ownerId: String,
+    val createdAt: Long
 )

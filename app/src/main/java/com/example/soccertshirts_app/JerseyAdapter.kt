@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.soccertshirts_app.data.model.Jersey
 import com.example.soccertshirts_app.databinding.ItemJerseyBinding
+import com.squareup.picasso.Picasso
 
 class JerseyAdapter(private var jerseys: List<Jersey>) :
     RecyclerView.Adapter<JerseyAdapter.JerseyViewHolder>() {
@@ -22,6 +23,16 @@ class JerseyAdapter(private var jerseys: List<Jersey>) :
             tvTitle.text = jersey.title
             tvTeam.text = jersey.team
             tvPrice.text = "$${jersey.price}"
+
+            if (jersey.imageUrl.isNotEmpty()) {
+                Picasso.get()
+                    .load(jersey.imageUrl)
+                    .placeholder(android.R.drawable.ic_menu_gallery)
+                    .error(android.R.drawable.ic_menu_report_image)
+                    .into(ivJerseyImage)
+            } else {
+                ivJerseyImage.setImageResource(android.R.drawable.ic_menu_gallery)
+            }
         }
     }
 

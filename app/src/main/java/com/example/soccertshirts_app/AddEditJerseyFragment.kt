@@ -49,8 +49,54 @@ class AddEditJerseyFragment : Fragment() {
         }
 
         binding.btnSave.setOnClickListener {
-            checkAndUploadImage()
+            if (validateForm()) {
+                checkAndUploadImage()
+            }
         }
+    }
+
+    private fun validateForm(): Boolean {
+        var isValid = true
+
+        val title = binding.etTitle.text.toString().trim()
+        val team = binding.etTeam.text.toString().trim()
+        val yearStr = binding.etYear.text.toString().trim()
+        val priceStr = binding.etPrice.text.toString().trim()
+        val description = binding.etDescription.text.toString().trim()
+
+        if (title.isEmpty()) {
+            binding.etTitle.error = "Title is required"
+            isValid = false
+        }
+
+        if (team.isEmpty()) {
+            binding.etTeam.error = "Team is required"
+            isValid = false
+        }
+
+        val year = yearStr.toIntOrNull()
+        if (year == null) {
+            binding.etYear.error = "Valid year is required"
+            isValid = false
+        }
+
+        val price = priceStr.toDoubleOrNull()
+        if (price == null || price <= 0) {
+            binding.etPrice.error = "Valid positive price is required"
+            isValid = false
+        }
+
+        if (description.isEmpty()) {
+            binding.etDescription.error = "Description is required"
+            isValid = false
+        }
+
+        if (selectedImageUri == null) {
+            Toast.makeText(requireContext(), "Please select an image", Toast.LENGTH_SHORT).show()
+            isValid = false
+        }
+
+        return isValid
     }
 
     private fun checkAndUploadImage() {
@@ -72,17 +118,15 @@ class AddEditJerseyFragment : Fragment() {
                     Toast.makeText(requireContext(), "Image upload failed", Toast.LENGTH_SHORT).show()
                 }
             }
-        } ?: run {
-            saveJerseyToFirestore("")
         }
     }
 
     private fun saveJerseyToFirestore(imageUrl: String) {
-        val title = binding.etTitle.text.toString()
-        val team = binding.etTeam.text.toString()
-        val year = binding.etYear.text.toString().toIntOrNull() ?: 0
-        val price = binding.etPrice.text.toString().toDoubleOrNull() ?: 0.0
-        val description = binding.etDescription.text.toString()
+        val title = binding.etTitle.text.toString().trim()
+        val team = binding.etTeam.text.toString().trim()
+        val year = binding.etYear.text.toString().trim().toInt()
+        val price = binding.etPrice.text.toString().trim().toDouble()
+        val description = binding.etDescription.text.toString().trim()
         val ownerId = auth.currentUser?.uid ?: ""
 
         val jerseyRef = db.collection("jerseys").document()
@@ -94,7 +138,8 @@ class AddEditJerseyFragment : Fragment() {
             price = price,
             description = description,
             imageUrl = imageUrl,
-            ownerId = ownerId
+            ownerId = ownerId,
+            createdAt = System.currentTimeMillis()
         )
 
         jerseyRef.set(jersey)

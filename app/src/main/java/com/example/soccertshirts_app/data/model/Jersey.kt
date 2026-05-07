@@ -8,5 +8,6 @@ data class Jersey(
     val price: Double = 0.0,
     val description: String = "",
     val imageUrl: String = "",
-    val ownerId: String = ""
+    val ownerId: String = "",
+    val createdAt: Long = 0L
 )

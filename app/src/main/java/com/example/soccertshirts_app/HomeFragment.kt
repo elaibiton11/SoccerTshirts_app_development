@@ -15,6 +15,7 @@ import com.example.soccertshirts_app.data.model.Jersey
 import com.example.soccertshirts_app.databinding.FragmentHomeBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
@@ -64,7 +65,8 @@ class HomeFragment : Fragment() {
                 val jerseyModels = localJerseys.map { entity ->
                     Jersey(
                         entity.id, entity.title, entity.team, entity.year,
-                        entity.price, entity.description, entity.imageUrl, entity.ownerId
+                        entity.price, entity.description, entity.imageUrl, entity.ownerId,
+                        entity.createdAt
                     )
                 }
                 adapter.updateData(jerseyModels)
@@ -74,6 +76,7 @@ class HomeFragment : Fragment() {
 
     private fun fetchJerseysFromFirestore() {
         db.collection("jerseys")
+            .orderBy("createdAt", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { result ->
                 val jerseys = result.toObjects(Jersey::class.java)
@@ -90,11 +93,11 @@ class HomeFragment : Fragment() {
         val entities = jerseys.map { model ->
             JerseyEntity(
                 model.id, model.title, model.team, model.year,
-                model.price, model.description, model.imageUrl, model.ownerId
+                model.price, model.description, model.imageUrl, model.ownerId,
+                model.createdAt
             )
         }
         lifecycleScope.launch {
-            // Optional: jerseyDao.deleteAll() // If you want to keep local exactly as remote
             jerseyDao.insertAll(entities)
         }
     }

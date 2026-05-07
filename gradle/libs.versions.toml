@@ -16,6 +16,7 @@ room = "2.6.1"
 ksp = "2.0.21-1.0.27"
 cloudinary = "3.0.2"
 coil = "2.7.0"
+picasso = "2.8"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -36,6 +37,7 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 cloudinary-android = { group = "com.cloudinary", name = "cloudinary-android", version.ref = "cloudinary" }
 coil = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
+picasso = { group = "com.squareup.picasso", name = "picasso", version.ref = "picasso" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

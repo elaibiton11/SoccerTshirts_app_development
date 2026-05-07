@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.example.soccertshirts_app.data.local.dao.JerseyDao
 import com.example.soccertshirts_app.data.local.entity.JerseyEntity
 
-@Database(entities = [JerseyEntity::class], version = 1, exportSchema = false)
+@Database(entities = [JerseyEntity::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun jerseyDao(): JerseyDao
@@ -22,7 +22,10 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "soccer_tshirts_db"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
+
                 INSTANCE = instance
                 instance
             }

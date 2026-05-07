@@ -49,7 +49,6 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
 
     // Navigation
-// Navigation
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
 
@@ -66,6 +65,9 @@ dependencies {
     // Cloudinary & Coil
     implementation(libs.cloudinary.android)
     implementation(libs.coil)
+
+    // Picasso
+    implementation(libs.picasso)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
