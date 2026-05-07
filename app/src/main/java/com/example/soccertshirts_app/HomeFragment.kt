@@ -10,24 +10,29 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.soccertshirts_app.data.local.AppDatabase
+import com.example.soccertshirts_app.data.repository.AuthRepository
 import com.example.soccertshirts_app.data.repository.JerseyRepository
 import com.example.soccertshirts_app.databinding.FragmentHomeBinding
+import com.example.soccertshirts_app.viewmodel.AuthViewModel
+import com.example.soccertshirts_app.viewmodel.AuthViewModelFactory
 import com.example.soccertshirts_app.viewmodel.HomeViewModel
 import com.example.soccertshirts_app.viewmodel.HomeViewModelFactory
-import com.google.firebase.auth.FirebaseAuth
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     
-    private val auth = FirebaseAuth.getInstance()
     private lateinit var adapter: JerseyAdapter
     
-    private val viewModel: HomeViewModel by viewModels {
+    private val homeViewModel: HomeViewModel by viewModels {
         val jerseyDao = AppDatabase.getDatabase(requireContext()).jerseyDao()
         val repository = JerseyRepository(jerseyDao)
         HomeViewModelFactory(repository)
+    }
+
+    private val authViewModel: AuthViewModel by viewModels {
+        AuthViewModelFactory(AuthRepository())
     }
 
     override fun onCreateView(
@@ -43,22 +48,21 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
-        observeViewModel()
+        observeViewModels()
         
-        viewModel.loadJerseys()
+        homeViewModel.loadJerseys()
 
         binding.btnAddJersey.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_addEditJerseyFragment)
         }
 
         binding.btnLogout.setOnClickListener {
-            auth.signOut()
-            findNavController().navigate(R.id.action_homeFragment_to_welcomeFragment)
+            authViewModel.logout()
         }
     }
 
     private fun setupRecyclerView() {
-        val currentUserId = auth.currentUser?.uid
+        val currentUserId = authViewModel.currentUserId
         adapter = JerseyAdapter(
             jerseys = emptyList(),
             currentUserId = currentUserId,
@@ -67,22 +71,28 @@ class HomeFragment : Fragment() {
                 findNavController().navigate(action)
             },
             onDeleteClick = { jersey ->
-                viewModel.deleteJersey(jersey)
+                homeViewModel.deleteJersey(jersey)
             }
         )
         binding.rvJerseys.layoutManager = LinearLayoutManager(requireContext())
         binding.rvJerseys.adapter = adapter
     }
 
-    private fun observeViewModel() {
-        viewModel.jerseys.observe(viewLifecycleOwner) { jerseys ->
+    private fun observeViewModels() {
+        homeViewModel.jerseys.observe(viewLifecycleOwner) { jerseys ->
             adapter.updateData(jerseys)
         }
 
-        viewModel.errorMessage.observe(viewLifecycleOwner) { message ->
+        homeViewModel.errorMessage.observe(viewLifecycleOwner) { message ->
             message?.let {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                viewModel.clearError()
+                homeViewModel.clearError()
+            }
+        }
+
+        authViewModel.isLoggedIn.observe(viewLifecycleOwner) { isLoggedIn ->
+            if (!isLoggedIn) {
+                findNavController().navigate(R.id.action_homeFragment_to_welcomeFragment)
             }
         }
     }

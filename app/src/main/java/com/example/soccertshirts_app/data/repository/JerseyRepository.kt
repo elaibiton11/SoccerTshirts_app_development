@@ -39,6 +39,16 @@ class JerseyRepository(private val jerseyDao: JerseyDao) {
         jerseyDao.deleteById(jerseyId)
     }
 
+    suspend fun getJerseyById(jerseyId: String): Jersey? {
+        return db.collection("jerseys").document(jerseyId).get().await().toObject(Jersey::class.java)
+    }
+
+    suspend fun saveJersey(jersey: Jersey) {
+        db.collection("jerseys").document(jersey.id).set(jersey).await()
+        // Also update local cache for this specific item
+        jerseyDao.insert(jersey.toEntity())
+    }
+
     private fun JerseyEntity.toModel() = Jersey(
         id, title, team, year, price, description, imageUrl, ownerId, createdAt
     )
