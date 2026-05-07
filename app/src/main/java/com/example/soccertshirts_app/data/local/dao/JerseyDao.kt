@@ -1,0 +1,23 @@
+package com.example.soccertshirts_app.data.local.dao
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import com.example.soccertshirts_app.data.local.entity.JerseyEntity
+
+@Dao
+interface JerseyDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(jerseys: List<JerseyEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(jersey: JerseyEntity)
+
+    @Query("SELECT * FROM jerseys")
+    suspend fun getAllJerseys(): List<JerseyEntity>
+
+    @Query("DELETE FROM jerseys")
+    suspend fun deleteAll()
+}
