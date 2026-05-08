@@ -49,6 +49,15 @@ class JerseyRepository(private val jerseyDao: JerseyDao) {
         jerseyDao.insert(jersey.toEntity())
     }
 
+    suspend fun getJerseysByOwner(ownerId: String): List<Jersey> {
+        val snapshot = db.collection("jerseys")
+            .whereEqualTo("ownerId", ownerId)
+            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .get()
+            .await()
+        return snapshot.toObjects(Jersey::class.java)
+    }
+
     private fun JerseyEntity.toModel() = Jersey(
         id, title, team, year, price, description, imageUrl, ownerId, createdAt
     )

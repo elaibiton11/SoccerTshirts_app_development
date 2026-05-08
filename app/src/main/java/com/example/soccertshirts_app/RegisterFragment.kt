@@ -35,9 +35,16 @@ class RegisterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnRegister.setOnClickListener {
-            val email = binding.etEmail.text.toString()
-            val password = binding.etPassword.text.toString()
-            viewModel.register(email, password)
+            val username = binding.etUsername.text.toString().trim()
+            val email = binding.etEmail.text.toString().trim()
+            val password = binding.etPassword.text.toString().trim()
+            
+            if (username.isEmpty()) {
+                binding.etUsername.error = "Username is required"
+                return@setOnClickListener
+            }
+            
+            viewModel.register(email, username, password)
         }
 
         observeViewModel()

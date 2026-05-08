@@ -29,10 +29,14 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
         }
     }
 
-    fun register(email: String, password: String) {
+    fun register(email: String, username: String, password: String) {
         viewModelScope.launch {
             try {
-                val success = repository.register(email, password)
+                if (username.isBlank()) {
+                    _errorMessage.value = "Username is required"
+                    return@launch
+                }
+                val success = repository.register(email, username, password)
                 _authSuccess.value = success
             } catch (e: Exception) {
                 _errorMessage.value = e.message
