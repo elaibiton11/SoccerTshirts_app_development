@@ -14,5 +14,7 @@ data class JerseyEntity(
     val description: String,
     val imageUrl: String,
     val ownerId: String,
+    val ownerName: String,
+    val ownerProfileImageUrl: String,
     val createdAt: Long
 )

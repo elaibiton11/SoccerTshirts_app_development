@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.example.soccertshirts_app.data.local.dao.JerseyDao
 import com.example.soccertshirts_app.data.local.entity.JerseyEntity
 
-@Database(entities = [JerseyEntity::class], version = 2, exportSchema = false)
+@Database(entities = [JerseyEntity::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun jerseyDao(): JerseyDao

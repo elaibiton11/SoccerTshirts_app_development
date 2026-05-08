@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.soccertshirts_app.data.local.AppDatabase
 import com.example.soccertshirts_app.data.repository.AuthRepository
 import com.example.soccertshirts_app.data.repository.JerseyRepository
+import com.example.soccertshirts_app.data.services.CloudinaryModel
 import com.example.soccertshirts_app.databinding.FragmentProfileBinding
 import com.example.soccertshirts_app.viewmodel.ProfileViewModel
 import com.example.soccertshirts_app.viewmodel.ProfileViewModelFactory
@@ -50,6 +51,7 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        CloudinaryModel.init(requireContext())
 
         setupRecyclerView()
         observeViewModel()
@@ -95,6 +97,8 @@ class ProfileFragment : Fragment() {
                         .placeholder(android.R.drawable.ic_menu_gallery)
                         .error(android.R.drawable.ic_menu_report_image)
                         .into(binding.ivProfileImage)
+                } else {
+                    binding.ivProfileImage.setImageResource(android.R.drawable.ic_menu_gallery)
                 }
             }
         }

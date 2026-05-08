@@ -28,7 +28,9 @@ class JerseyAdapter(
             tvTitle.text = jersey.title
             tvTeam.text = jersey.team
             tvPrice.text = "$${jersey.price}"
+            tvOwnerName.text = jersey.ownerName.ifEmpty { "Anonymous" }
 
+            // Load Jersey Image
             if (jersey.imageUrl.isNotEmpty()) {
                 Picasso.get()
                     .load(jersey.imageUrl)
@@ -37,6 +39,17 @@ class JerseyAdapter(
                     .into(ivJerseyImage)
             } else {
                 ivJerseyImage.setImageResource(android.R.drawable.ic_menu_gallery)
+            }
+
+            // Load Owner Profile Image
+            if (jersey.ownerProfileImageUrl.isNotEmpty()) {
+                Picasso.get()
+                    .load(jersey.ownerProfileImageUrl)
+                    .placeholder(android.R.drawable.ic_menu_gallery)
+                    .error(android.R.drawable.ic_menu_report_image)
+                    .into(ivOwnerProfile)
+            } else {
+                ivOwnerProfile.setImageResource(android.R.drawable.ic_menu_gallery)
             }
 
             // Show actions only for the owner

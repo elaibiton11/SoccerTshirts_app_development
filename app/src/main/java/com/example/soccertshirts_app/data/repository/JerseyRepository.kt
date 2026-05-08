@@ -58,11 +58,40 @@ class JerseyRepository(private val jerseyDao: JerseyDao) {
         return snapshot.toObjects(Jersey::class.java)
     }
 
+    suspend fun getUserData(uid: String): Map<String, Any>? {
+        return try {
+            val document = db.collection("users").document(uid).get().await()
+            document.data
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     private fun JerseyEntity.toModel() = Jersey(
-        id, title, team, year, price, description, imageUrl, ownerId, createdAt
+        id = id,
+        title = title,
+        team = team,
+        year = year,
+        price = price,
+        description = description,
+        imageUrl = imageUrl,
+        ownerId = ownerId,
+        ownerName = ownerName,
+        ownerProfileImageUrl = ownerProfileImageUrl,
+        createdAt = createdAt
     )
 
     private fun Jersey.toEntity() = JerseyEntity(
-        id, title, team, year, price, description, imageUrl, ownerId, createdAt
+        id = id,
+        title = title,
+        team = team,
+        year = year,
+        price = price,
+        description = description,
+        imageUrl = imageUrl,
+        ownerId = ownerId,
+        ownerName = ownerName,
+        ownerProfileImageUrl = ownerProfileImageUrl,
+        createdAt = createdAt
     )
 }
