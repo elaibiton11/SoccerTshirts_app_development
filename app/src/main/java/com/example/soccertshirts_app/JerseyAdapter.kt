@@ -1,13 +1,19 @@
 package com.example.soccertshirts_app
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.soccertshirts_app.data.model.Jersey
 import com.example.soccertshirts_app.databinding.ItemJerseyBinding
+import com.squareup.picasso.Picasso
 
-class JerseyAdapter(private var jerseys: List<Jersey>) :
-    RecyclerView.Adapter<JerseyAdapter.JerseyViewHolder>() {
+class JerseyAdapter(
+    private var jerseys: List<Jersey>,
+    private val currentUserId: String?,
+    private val onEditClick: (Jersey) -> Unit,
+    private val onDeleteClick: (Jersey) -> Unit
+) : RecyclerView.Adapter<JerseyAdapter.JerseyViewHolder>() {
 
     class JerseyViewHolder(val binding: ItemJerseyBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -22,6 +28,25 @@ class JerseyAdapter(private var jerseys: List<Jersey>) :
             tvTitle.text = jersey.title
             tvTeam.text = jersey.team
             tvPrice.text = "$${jersey.price}"
+
+            if (jersey.imageUrl.isNotEmpty()) {
+                Picasso.get()
+                    .load(jersey.imageUrl)
+                    .placeholder(android.R.drawable.ic_menu_gallery)
+                    .error(android.R.drawable.ic_menu_report_image)
+                    .into(ivJerseyImage)
+            } else {
+                ivJerseyImage.setImageResource(android.R.drawable.ic_menu_gallery)
+            }
+
+            // Show actions only for the owner
+            if (currentUserId != null && jersey.ownerId == currentUserId) {
+                llActions.visibility = View.VISIBLE
+                ibEdit.setOnClickListener { onEditClick(jersey) }
+                ibDelete.setOnClickListener { onDeleteClick(jersey) }
+            } else {
+                llActions.visibility = View.GONE
+            }
         }
     }
 

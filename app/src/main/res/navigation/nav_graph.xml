@@ -65,7 +65,13 @@
     <fragment
         android:id="@+id/addEditJerseyFragment"
         android:name="com.example.soccertshirts_app.AddEditJerseyFragment"
-        android:label="Add Jersey"
-        tools:layout="@layout/fragment_add_edit_jersey" />
+        android:label="Add/Edit Jersey"
+        tools:layout="@layout/fragment_add_edit_jersey">
+        <argument
+            android:name="jerseyId"
+            app:argType="string"
+            android:defaultValue="@null"
+            app:nullable="true" />
+    </fragment>
 
 </navigation>

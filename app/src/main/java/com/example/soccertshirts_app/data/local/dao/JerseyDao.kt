@@ -15,8 +15,11 @@ interface JerseyDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(jersey: JerseyEntity)
 
-    @Query("SELECT * FROM jerseys")
+    @Query("SELECT * FROM jerseys ORDER BY createdAt DESC")
     suspend fun getAllJerseys(): List<JerseyEntity>
+
+    @Query("DELETE FROM jerseys WHERE id = :id")
+    suspend fun deleteById(id: String)
 
     @Query("DELETE FROM jerseys")
     suspend fun deleteAll()

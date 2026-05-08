@@ -8,21 +8,30 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.example.soccertshirts_app.data.model.Jersey
+import androidx.navigation.fragment.navArgs
+import com.example.soccertshirts_app.data.local.AppDatabase
+import com.example.soccertshirts_app.data.repository.JerseyRepository
 import com.example.soccertshirts_app.data.services.CloudinaryModel
 import com.example.soccertshirts_app.databinding.FragmentAddEditJerseyBinding
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import java.util.*
+import com.example.soccertshirts_app.viewmodel.AddEditJerseyViewModel
+import com.example.soccertshirts_app.viewmodel.AddEditJerseyViewModelFactory
+import com.squareup.picasso.Picasso
 
 class AddEditJerseyFragment : Fragment() {
 
     private var _binding: FragmentAddEditJerseyBinding? = null
     private val binding get() = _binding!!
-    private val db = FirebaseFirestore.getInstance()
-    private val auth = FirebaseAuth.getInstance()
+    
+    private val args: AddEditJerseyFragmentArgs by navArgs()
     private var selectedImageUri: Uri? = null
+
+    private val viewModel: AddEditJerseyViewModel by viewModels {
+        val jerseyDao = AppDatabase.getDatabase(requireContext()).jerseyDao()
+        val repository = JerseyRepository(jerseyDao)
+        AddEditJerseyViewModelFactory(repository)
+    }
 
     private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
@@ -44,68 +53,69 @@ class AddEditJerseyFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         CloudinaryModel.init(requireContext())
 
+        val jerseyId = args.jerseyId
+        if (!jerseyId.isNullOrEmpty()) {
+            viewModel.loadJersey(jerseyId)
+        }
+
         binding.btnSelectImage.setOnClickListener {
             getContent.launch("image/*")
         }
 
         binding.btnSave.setOnClickListener {
-            checkAndUploadImage()
+            saveJersey()
         }
+
+        observeViewModel()
     }
 
-    private fun checkAndUploadImage() {
-        val ownerId = auth.currentUser?.uid ?: ""
-        if (ownerId.isEmpty()) {
-            Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
-            return
-        }
+    private fun saveJersey() {
+        val title = binding.etTitle.text.toString().trim()
+        val team = binding.etTeam.text.toString().trim()
+        val year = binding.etYear.text.toString().trim().toIntOrNull()
+        val price = binding.etPrice.text.toString().trim().toDoubleOrNull()
+        val description = binding.etDescription.text.toString().trim()
 
-        binding.btnSave.isEnabled = false
-        
-        selectedImageUri?.let { uri ->
-            val publicId = "jersey_${UUID.randomUUID()}"
-            CloudinaryModel.uploadImage(uri, publicId) { imageUrl ->
-                if (imageUrl != null) {
-                    saveJerseyToFirestore(imageUrl)
-                } else {
-                    binding.btnSave.isEnabled = true
-                    Toast.makeText(requireContext(), "Image upload failed", Toast.LENGTH_SHORT).show()
+        viewModel.saveJersey(title, team, year, price, description, selectedImageUri)
+    }
+
+    private fun observeViewModel() {
+        viewModel.jersey.observe(viewLifecycleOwner) { jersey ->
+            jersey?.let {
+                binding.etTitle.setText(it.title)
+                binding.etTeam.setText(it.team)
+                binding.etYear.setText(it.year.toString())
+                binding.etPrice.setText(it.price.toString())
+                binding.etDescription.setText(it.description)
+                binding.btnSave.text = "Update Jersey"
+                
+                if (it.imageUrl.isNotEmpty()) {
+                    Picasso.get()
+                        .load(it.imageUrl)
+                        .placeholder(android.R.drawable.ic_menu_gallery)
+                        .into(binding.ivJerseyPreview)
                 }
             }
-        } ?: run {
-            saveJerseyToFirestore("")
         }
-    }
 
-    private fun saveJerseyToFirestore(imageUrl: String) {
-        val title = binding.etTitle.text.toString()
-        val team = binding.etTeam.text.toString()
-        val year = binding.etYear.text.toString().toIntOrNull() ?: 0
-        val price = binding.etPrice.text.toString().toDoubleOrNull() ?: 0.0
-        val description = binding.etDescription.text.toString()
-        val ownerId = auth.currentUser?.uid ?: ""
-
-        val jerseyRef = db.collection("jerseys").document()
-        val jersey = Jersey(
-            id = jerseyRef.id,
-            title = title,
-            team = team,
-            year = year,
-            price = price,
-            description = description,
-            imageUrl = imageUrl,
-            ownerId = ownerId
-        )
-
-        jerseyRef.set(jersey)
-            .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Jersey saved!", Toast.LENGTH_SHORT).show()
+        viewModel.isSaved.observe(viewLifecycleOwner) { saved ->
+            if (saved) {
+                Toast.makeText(requireContext(), "Jersey saved successfully!", Toast.LENGTH_SHORT).show()
                 findNavController().navigateUp()
             }
-            .addOnFailureListener { e ->
-                binding.btnSave.isEnabled = true
-                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+
+        viewModel.error.observe(viewLifecycleOwner) { errorMsg ->
+            errorMsg?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                viewModel.clearError()
             }
+        }
+
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            binding.btnSave.isEnabled = !isLoading
+            // You could show a progress bar here if you had one in layout
+        }
     }
 
     override fun onDestroyView() {
