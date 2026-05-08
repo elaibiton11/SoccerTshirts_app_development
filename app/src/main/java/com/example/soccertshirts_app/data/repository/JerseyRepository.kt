@@ -3,6 +3,7 @@ package com.example.soccertshirts_app.data.repository
 import com.example.soccertshirts_app.data.local.dao.JerseyDao
 import com.example.soccertshirts_app.data.local.entity.JerseyEntity
 import com.example.soccertshirts_app.data.model.Jersey
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
@@ -49,13 +50,39 @@ class JerseyRepository(private val jerseyDao: JerseyDao) {
         jerseyDao.insert(jersey.toEntity())
     }
 
+    suspend fun toggleLike(jerseyId: String, userId: String) {
+        val jerseyRef = db.collection("jerseys").document(jerseyId)
+        val snapshot = jerseyRef.get().await()
+        val jersey = snapshot.toObject(Jersey::class.java) ?: return
+
+        val isLiked = jersey.likedBy.contains(userId)
+        if (isLiked) {
+            jerseyRef.update(
+                "likedBy", FieldValue.arrayRemove(userId),
+                "likesCount", FieldValue.increment(-1)
+            ).await()
+        } else {
+            jerseyRef.update(
+                "likedBy", FieldValue.arrayUnion(userId),
+                "likesCount", FieldValue.increment(1)
+            ).await()
+        }
+
+        // Update local cache
+        val updatedJersey = getJerseyById(jerseyId)
+        if (updatedJersey != null) {
+            jerseyDao.insert(updatedJersey.toEntity())
+        }
+    }
+
     suspend fun getJerseysByOwner(ownerId: String): List<Jersey> {
         val snapshot = db.collection("jerseys")
             .whereEqualTo("ownerId", ownerId)
-            .orderBy("createdAt", Query.Direction.DESCENDING)
             .get()
             .await()
-        return snapshot.toObjects(Jersey::class.java)
+        
+        // Sort in Kotlin to avoid requiring a composite index in Firestore
+        return snapshot.toObjects(Jersey::class.java).sortedByDescending { it.createdAt }
     }
 
     suspend fun getUserData(uid: String): Map<String, Any>? {
@@ -78,7 +105,9 @@ class JerseyRepository(private val jerseyDao: JerseyDao) {
         ownerId = ownerId,
         ownerName = ownerName,
         ownerProfileImageUrl = ownerProfileImageUrl,
-        createdAt = createdAt
+        createdAt = createdAt,
+        likesCount = likesCount,
+        likedBy = likedBy
     )
 
     private fun Jersey.toEntity() = JerseyEntity(
@@ -92,6 +121,8 @@ class JerseyRepository(private val jerseyDao: JerseyDao) {
         ownerId = ownerId,
         ownerName = ownerName,
         ownerProfileImageUrl = ownerProfileImageUrl,
-        createdAt = createdAt
+        createdAt = createdAt,
+        likesCount = likesCount,
+        likedBy = likedBy
     )
 }

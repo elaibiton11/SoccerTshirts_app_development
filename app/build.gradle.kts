@@ -71,6 +71,9 @@ dependencies {
     // Picasso
     implementation(libs.picasso)
 
+    // GSON
+    implementation(libs.gson)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

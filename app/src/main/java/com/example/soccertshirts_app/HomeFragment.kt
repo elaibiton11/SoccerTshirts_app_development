@@ -76,6 +76,9 @@ class HomeFragment : Fragment() {
             },
             onDeleteClick = { jersey ->
                 homeViewModel.deleteJersey(jersey)
+            },
+            onLikeClick = { jersey ->
+                homeViewModel.toggleLike(jersey)
             }
         )
         binding.rvJerseys.layoutManager = LinearLayoutManager(requireContext())

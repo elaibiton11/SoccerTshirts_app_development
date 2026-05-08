@@ -67,33 +67,59 @@
             android:textStyle="bold" />
 
         <LinearLayout
-            android:id="@+id/ll_actions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:gravity="end"
-            android:orientation="horizontal"
-            android:visibility="gone">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/ib_edit"
+                android:id="@+id/ib_like"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@android:drawable/ic_menu_edit"
-                android:contentDescription="Edit"
-                android:padding="8dp" />
+                android:src="@drawable/ic_heart_outline"
+                android:contentDescription="Like" />
 
-            <ImageButton
-                android:id="@+id/ib_delete"
+            <TextView
+                android:id="@+id/tv_likes_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@android:drawable/ic_menu_delete"
-                android:contentDescription="Delete"
-                android:padding="8dp" />
+                android:layout_marginStart="4dp"
+                android:text="0" />
 
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:id="@+id/ll_actions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ImageButton
+                    android:id="@+id/ib_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_menu_edit"
+                    android:contentDescription="Edit"
+                    android:padding="8dp" />
+
+                <ImageButton
+                    android:id="@+id/ib_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_menu_delete"
+                    android:contentDescription="Delete"
+                    android:padding="8dp" />
+
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>

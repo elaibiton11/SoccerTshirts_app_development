@@ -12,7 +12,8 @@ class JerseyAdapter(
     private var jerseys: List<Jersey>,
     private val currentUserId: String?,
     private val onEditClick: (Jersey) -> Unit,
-    private val onDeleteClick: (Jersey) -> Unit
+    private val onDeleteClick: (Jersey) -> Unit,
+    private val onLikeClick: (Jersey) -> Unit
 ) : RecyclerView.Adapter<JerseyAdapter.JerseyViewHolder>() {
 
     class JerseyViewHolder(val binding: ItemJerseyBinding) : RecyclerView.ViewHolder(binding.root)
@@ -29,6 +30,15 @@ class JerseyAdapter(
             tvTeam.text = jersey.team
             tvPrice.text = "$${jersey.price}"
             tvOwnerName.text = jersey.ownerName.ifEmpty { "Anonymous" }
+            tvLikesCount.text = jersey.likesCount.toString()
+
+            // Like status - Heart icon
+            val isLiked = currentUserId != null && jersey.likedBy.contains(currentUserId)
+            ibLike.setImageResource(
+                if (isLiked) R.drawable.ic_heart_filled
+                else R.drawable.ic_heart_outline
+            )
+            ibLike.setOnClickListener { onLikeClick(jersey) }
 
             // Load Jersey Image
             if (jersey.imageUrl.isNotEmpty()) {

@@ -50,34 +50,64 @@ class ProfileViewModel(
     }
 
     fun updateProfile(username: String, selectedImageUri: Uri?) {
-        val currentProfile = _profile.value ?: return
         if (username.isBlank()) {
             _error.value = "Username cannot be empty"
             return
         }
 
+        val currentUser = authRepository.getCurrentUser()
+        if (currentUser == null) {
+            _error.value = "User not logged in"
+            return
+        }
+        val uid = currentUser.uid
+
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                var imageUrl = currentProfile.profileImageUrl
+                // Get current state from LiveData or fetch from Firestore if missing
+                val profileToUpdate = _profile.value ?: authRepository.getUserProfile(uid) 
+                    ?: UserProfile(uid = uid, email = currentUser.email ?: "")
+
+                var imageUrl = profileToUpdate.profileImageUrl
                 
+                // Only upload if a new image was selected
                 if (selectedImageUri != null) {
-                    val publicId = "profile_${currentProfile.uid}_${UUID.randomUUID()}"
+                    val publicId = "profile_${uid}_${UUID.randomUUID()}"
                     imageUrl = uploadImage(selectedImageUri, publicId) ?: throw Exception("Image upload failed")
                 }
 
-                val updatedProfile = currentProfile.copy(
+                val updatedProfile = profileToUpdate.copy(
                     username = username,
                     profileImageUrl = imageUrl
                 )
 
+                // Update Firestore
                 authRepository.updateUserProfile(updatedProfile)
+                
+                // Update local state
                 _profile.value = updatedProfile
                 _isUpdated.value = true
+                
+                // Refresh data to ensure UI is in sync
+                loadProfile()
             } catch (e: Exception) {
                 _error.value = "Failed to update profile: ${e.message}"
             } finally {
                 _isLoading.value = false
+            }
+        }
+    }
+
+    fun toggleLike(jersey: Jersey) {
+        val userId = authRepository.getCurrentUser()?.uid ?: return
+        viewModelScope.launch {
+            try {
+                jerseyRepository.toggleLike(jersey.id, userId)
+                // Refresh data
+                loadProfile()
+            } catch (e: Exception) {
+                _error.value = "Failed to update like: ${e.message}"
             }
         }
     }

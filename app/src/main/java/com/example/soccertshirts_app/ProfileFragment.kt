@@ -81,6 +81,9 @@ class ProfileFragment : Fragment() {
             },
             onDeleteClick = { jersey ->
                 Toast.makeText(context, "Use Home screen to delete jerseys", Toast.LENGTH_SHORT).show()
+            },
+            onLikeClick = { jersey ->
+                viewModel.toggleLike(jersey)
             }
         )
         binding.rvMyJerseys.layoutManager = LinearLayoutManager(requireContext())
