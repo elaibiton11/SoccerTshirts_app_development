@@ -1,8 +1,12 @@
 package com.example.soccertshirts_app
 
+import android.graphics.Typeface
+import android.text.SpannableStringBuilder
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.soccertshirts_app.data.model.Jersey
 import com.example.soccertshirts_app.databinding.ItemJerseyBinding
@@ -13,7 +17,8 @@ class JerseyAdapter(
     private val currentUserId: String?,
     private val onEditClick: (Jersey) -> Unit,
     private val onDeleteClick: (Jersey) -> Unit,
-    private val onLikeClick: (Jersey) -> Unit
+    private val onLikeClick: (Jersey) -> Unit,
+    private val onCommentClick: (Jersey) -> Unit
 ) : RecyclerView.Adapter<JerseyAdapter.JerseyViewHolder>() {
 
     class JerseyViewHolder(val binding: ItemJerseyBinding) : RecyclerView.ViewHolder(binding.root)
@@ -39,6 +44,9 @@ class JerseyAdapter(
                 else R.drawable.ic_heart_outline
             )
             ibLike.setOnClickListener { onLikeClick(jersey) }
+
+            // Comment button
+            ibComment.setOnClickListener { onCommentClick(jersey) }
 
             // Load Jersey Image
             if (jersey.imageUrl.isNotEmpty()) {
@@ -69,6 +77,34 @@ class JerseyAdapter(
                 ibDelete.setOnClickListener { onDeleteClick(jersey) }
             } else {
                 llActions.visibility = View.GONE
+            }
+
+            // Comments Preview
+            if (jersey.recentComments.isNotEmpty()) {
+                llCommentsPreview.visibility = View.VISIBLE
+                llCommentsContainer.removeAllViews()
+                
+                jersey.recentComments.forEach { comment ->
+                    val textView = TextView(root.context).apply {
+                        val spannable = SpannableStringBuilder()
+                        spannable.append(comment.username, StyleSpan(Typeface.BOLD), 0)
+                        spannable.append(": ${comment.text}")
+                        text = spannable
+                        textSize = 13f
+                        setPadding(0, 2, 0, 2)
+                    }
+                    llCommentsContainer.addView(textView)
+                }
+
+                if (jersey.commentsCount > 3) {
+                    tvViewAllComments.visibility = View.VISIBLE
+                    tvViewAllComments.text = "View all ${jersey.commentsCount} comments"
+                    tvViewAllComments.setOnClickListener { onCommentClick(jersey) }
+                } else {
+                    tvViewAllComments.visibility = View.GONE
+                }
+            } else {
+                llCommentsPreview.visibility = View.GONE
             }
         }
     }

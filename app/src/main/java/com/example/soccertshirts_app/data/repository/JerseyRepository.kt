@@ -2,6 +2,7 @@ package com.example.soccertshirts_app.data.repository
 
 import com.example.soccertshirts_app.data.local.dao.JerseyDao
 import com.example.soccertshirts_app.data.local.entity.JerseyEntity
+import com.example.soccertshirts_app.data.model.Comment
 import com.example.soccertshirts_app.data.model.Jersey
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -23,8 +24,24 @@ class JerseyRepository(private val jerseyDao: JerseyDao) {
             .await()
         
         val jerseys = snapshot.toObjects(Jersey::class.java)
-        saveToLocal(jerseys)
-        return jerseys
+        
+        // Fetch preview comments and count for each jersey
+        val jerseysWithPreviews = jerseys.map { jersey ->
+            val commentsSnapshot = db.collection("jerseys").document(jersey.id)
+                .collection("comments")
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .get()
+                .await()
+            
+            val allComments = commentsSnapshot.toObjects(Comment::class.java)
+            jersey.copy(
+                recentComments = allComments.take(3),
+                commentsCount = allComments.size
+            )
+        }
+        
+        saveToLocal(jerseysWithPreviews)
+        return jerseysWithPreviews
     }
 
     private suspend fun saveToLocal(jerseys: List<Jersey>) {
@@ -41,7 +58,19 @@ class JerseyRepository(private val jerseyDao: JerseyDao) {
     }
 
     suspend fun getJerseyById(jerseyId: String): Jersey? {
-        return db.collection("jerseys").document(jerseyId).get().await().toObject(Jersey::class.java)
+        val jersey = db.collection("jerseys").document(jerseyId).get().await().toObject(Jersey::class.java)
+        return jersey?.let {
+            val commentsSnapshot = db.collection("jerseys").document(it.id)
+                .collection("comments")
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .get()
+                .await()
+            val allComments = commentsSnapshot.toObjects(Comment::class.java)
+            it.copy(
+                recentComments = allComments.take(3),
+                commentsCount = allComments.size
+            )
+        }
     }
 
     suspend fun saveJersey(jersey: Jersey) {
@@ -81,8 +110,20 @@ class JerseyRepository(private val jerseyDao: JerseyDao) {
             .get()
             .await()
         
-        // Sort in Kotlin to avoid requiring a composite index in Firestore
-        return snapshot.toObjects(Jersey::class.java).sortedByDescending { it.createdAt }
+        val jerseys = snapshot.toObjects(Jersey::class.java)
+        
+        return jerseys.map { jersey ->
+            val commentsSnapshot = db.collection("jerseys").document(jersey.id)
+                .collection("comments")
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .get()
+                .await()
+            val allComments = commentsSnapshot.toObjects(Comment::class.java)
+            jersey.copy(
+                recentComments = allComments.take(3),
+                commentsCount = allComments.size
+            )
+        }.sortedByDescending { it.createdAt }
     }
 
     suspend fun getUserData(uid: String): Map<String, Any>? {
@@ -92,6 +133,24 @@ class JerseyRepository(private val jerseyDao: JerseyDao) {
         } catch (e: Exception) {
             null
         }
+    }
+
+    // --- Comments Functions ---
+
+    suspend fun getComments(jerseyId: String): List<Comment> {
+        return db.collection("jerseys").document(jerseyId)
+            .collection("comments")
+            .orderBy("createdAt", Query.Direction.ASCENDING)
+            .get()
+            .await()
+            .toObjects(Comment::class.java)
+    }
+
+    suspend fun addComment(jerseyId: String, comment: Comment) {
+        val commentRef = db.collection("jerseys").document(jerseyId)
+            .collection("comments").document()
+        val commentWithId = comment.copy(id = commentRef.id)
+        commentRef.set(commentWithId).await()
     }
 
     private fun JerseyEntity.toModel() = Jersey(
@@ -107,7 +166,8 @@ class JerseyRepository(private val jerseyDao: JerseyDao) {
         ownerProfileImageUrl = ownerProfileImageUrl,
         createdAt = createdAt,
         likesCount = likesCount,
-        likedBy = likedBy
+        likedBy = likedBy,
+        commentsCount = commentsCount
     )
 
     private fun Jersey.toEntity() = JerseyEntity(
@@ -123,6 +183,7 @@ class JerseyRepository(private val jerseyDao: JerseyDao) {
         ownerProfileImageUrl = ownerProfileImageUrl,
         createdAt = createdAt,
         likesCount = likesCount,
-        likedBy = likedBy
+        likedBy = likedBy,
+        commentsCount = commentsCount
     )
 }

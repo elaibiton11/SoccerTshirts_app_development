@@ -13,5 +13,7 @@ data class Jersey(
     val ownerProfileImageUrl: String = "",
     val createdAt: Long = 0L,
     val likesCount: Int = 0,
-    val likedBy: List<String> = emptyList()
+    val likedBy: List<String> = emptyList(),
+    val recentComments: List<Comment> = emptyList(),
+    val commentsCount: Int = 0
 )

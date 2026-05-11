@@ -79,6 +79,10 @@ class HomeFragment : Fragment() {
             },
             onLikeClick = { jersey ->
                 homeViewModel.toggleLike(jersey)
+            },
+            onCommentClick = { jersey ->
+                val action = HomeFragmentDirections.actionHomeFragmentToCommentsFragment(jersey.id)
+                findNavController().navigate(action)
             }
         )
         binding.rvJerseys.layoutManager = LinearLayoutManager(requireContext())

@@ -63,6 +63,9 @@
         <action
             android:id="@+id/action_homeFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_commentsFragment"
+            app:destination="@id/commentsFragment" />
     </fragment>
 
     <fragment
@@ -85,6 +88,19 @@
         <action
             android:id="@+id/action_profileFragment_to_addEditJerseyFragment"
             app:destination="@id/addEditJerseyFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_commentsFragment"
+            app:destination="@id/commentsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/commentsFragment"
+        android:name="com.example.soccertshirts_app.CommentsFragment"
+        android:label="Comments"
+        tools:layout="@layout/fragment_comments">
+        <argument
+            android:name="jerseyId"
+            app:argType="string" />
     </fragment>
 
 </navigation>

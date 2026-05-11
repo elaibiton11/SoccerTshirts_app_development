@@ -18,5 +18,6 @@ data class JerseyEntity(
     val ownerProfileImageUrl: String,
     val createdAt: Long,
     val likesCount: Int,
-    val likedBy: List<String>
+    val likedBy: List<String>,
+    val commentsCount: Int = 0
 )

@@ -74,16 +74,18 @@ class ProfileFragment : Fragment() {
             jerseys = emptyList(),
             currentUserId = currentUserId,
             onEditClick = { jersey ->
-                val bundle = Bundle().apply {
-                    putString("jerseyId", jersey.id)
-                }
-                findNavController().navigate(R.id.action_profileFragment_to_addEditJerseyFragment, bundle)
+                val action = ProfileFragmentDirections.actionProfileFragmentToAddEditJerseyFragment(jersey.id)
+                findNavController().navigate(action)
             },
             onDeleteClick = { jersey ->
                 Toast.makeText(context, "Use Home screen to delete jerseys", Toast.LENGTH_SHORT).show()
             },
             onLikeClick = { jersey ->
                 viewModel.toggleLike(jersey)
+            },
+            onCommentClick = { jersey ->
+                val action = ProfileFragmentDirections.actionProfileFragmentToCommentsFragment(jersey.id)
+                findNavController().navigate(action)
             }
         )
         binding.rvMyJerseys.layoutManager = LinearLayoutManager(requireContext())
