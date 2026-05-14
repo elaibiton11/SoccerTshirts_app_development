@@ -56,6 +56,10 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.action_homeFragment_to_addEditJerseyFragment)
         }
 
+        binding.btnProfile.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_profileFragment)
+        }
+
         binding.btnLogout.setOnClickListener {
             authViewModel.logout()
         }
@@ -72,6 +76,13 @@ class HomeFragment : Fragment() {
             },
             onDeleteClick = { jersey ->
                 homeViewModel.deleteJersey(jersey)
+            },
+            onLikeClick = { jersey ->
+                homeViewModel.toggleLike(jersey)
+            },
+            onCommentClick = { jersey ->
+                val action = HomeFragmentDirections.actionHomeFragmentToCommentsFragment(jersey.id)
+                findNavController().navigate(action)
             }
         )
         binding.rvJerseys.layoutManager = LinearLayoutManager(requireContext())

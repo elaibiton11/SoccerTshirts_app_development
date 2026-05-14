@@ -9,5 +9,11 @@ data class Jersey(
     val description: String = "",
     val imageUrl: String = "",
     val ownerId: String = "",
-    val createdAt: Long = 0L
+    val ownerName: String = "",
+    val ownerProfileImageUrl: String = "",
+    val createdAt: Long = 0L,
+    val likesCount: Int = 0,
+    val likedBy: List<String> = emptyList(),
+    val recentComments: List<Comment> = emptyList(),
+    val commentsCount: Int = 0
 )

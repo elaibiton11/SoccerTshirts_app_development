@@ -3,6 +3,7 @@ package com.example.soccertshirts_app.viewmodel
 import androidx.lifecycle.*
 import com.example.soccertshirts_app.data.model.Jersey
 import com.example.soccertshirts_app.data.repository.JerseyRepository
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 class HomeViewModel(private val repository: JerseyRepository) : ViewModel() {
@@ -35,10 +36,22 @@ class HomeViewModel(private val repository: JerseyRepository) : ViewModel() {
         viewModelScope.launch {
             try {
                 repository.deleteJersey(jersey.id)
-                // Refresh list after deletion
                 loadJerseys()
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to delete jersey: ${e.message}"
+            }
+        }
+    }
+
+    fun toggleLike(jersey: Jersey) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        viewModelScope.launch {
+            try {
+                repository.toggleLike(jersey.id, userId)
+                // Refresh data to show updated like status/count
+                loadJerseys()
+            } catch (e: Exception) {
+                _errorMessage.value = "Failed to update like: ${e.message}"
             }
         }
     }

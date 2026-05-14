@@ -48,7 +48,8 @@ class AddEditJerseyViewModel(private val repository: JerseyRepository) : ViewMod
         description: String,
         selectedImageUri: Uri?
     ) {
-        val ownerId = FirebaseAuth.getInstance().currentUser?.uid
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val ownerId = currentUser?.uid
         if (ownerId == null) {
             _error.value = "User not logged in"
             return
@@ -69,6 +70,18 @@ class AddEditJerseyViewModel(private val repository: JerseyRepository) : ViewMod
 
                 val jerseyId = existingJersey?.id ?: UUID.randomUUID().toString()
                 val createdAt = existingJersey?.createdAt ?: System.currentTimeMillis()
+                
+                var ownerName = existingJersey?.ownerName ?: ""
+                var ownerProfileImageUrl = existingJersey?.ownerProfileImageUrl ?: ""
+
+                // Fetch user data from Firestore for new jerseys or if name/profile image is missing
+                if (existingJersey == null || ownerName.isEmpty()) {
+                    val userData = repository.getUserData(ownerId)
+                    if (userData != null) {
+                        ownerName = userData["username"] as? String ?: "Anonymous"
+                        ownerProfileImageUrl = userData["profileImageUrl"] as? String ?: ""
+                    }
+                }
 
                 val newJersey = Jersey(
                     id = jerseyId,
@@ -79,6 +92,8 @@ class AddEditJerseyViewModel(private val repository: JerseyRepository) : ViewMod
                     description = description,
                     imageUrl = imageUrl,
                     ownerId = ownerId,
+                    ownerName = ownerName,
+                    ownerProfileImageUrl = ownerProfileImageUrl,
                     createdAt = createdAt
                 )
 
