@@ -73,6 +73,10 @@ class ProfileFragment : Fragment() {
         adapter = JerseyAdapter(
             jerseys = emptyList(),
             currentUserId = currentUserId,
+            onItemClick = { jersey ->
+                val action = ProfileFragmentDirections.actionProfileFragmentToJerseyDetailsFragment(jersey.id)
+                findNavController().navigate(action)
+            },
             onEditClick = { jersey ->
                 val action = ProfileFragmentDirections.actionProfileFragmentToAddEditJerseyFragment(jersey.id)
                 findNavController().navigate(action)

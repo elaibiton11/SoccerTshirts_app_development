@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso
 class JerseyAdapter(
     private var jerseys: List<Jersey>,
     private val currentUserId: String?,
+    private val onItemClick: (Jersey) -> Unit,
     private val onEditClick: (Jersey) -> Unit,
     private val onDeleteClick: (Jersey) -> Unit,
     private val onLikeClick: (Jersey) -> Unit,
@@ -31,6 +32,8 @@ class JerseyAdapter(
     override fun onBindViewHolder(holder: JerseyViewHolder, position: Int) {
         val jersey = jerseys[position]
         holder.binding.apply {
+            root.setOnClickListener { onItemClick(jersey) }
+            
             tvTitle.text = jersey.title
             tvTeam.text = jersey.team
             tvPrice.text = "$${jersey.price}"

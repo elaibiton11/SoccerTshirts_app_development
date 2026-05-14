@@ -66,6 +66,9 @@
         <action
             android:id="@+id/action_homeFragment_to_commentsFragment"
             app:destination="@id/commentsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_jerseyDetailsFragment"
+            app:destination="@id/jerseyDetailsFragment" />
     </fragment>
 
     <fragment
@@ -91,6 +94,9 @@
         <action
             android:id="@+id/action_profileFragment_to_commentsFragment"
             app:destination="@id/commentsFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_jerseyDetailsFragment"
+            app:destination="@id/jerseyDetailsFragment" />
     </fragment>
 
     <fragment
@@ -101,6 +107,19 @@
         <argument
             android:name="jerseyId"
             app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/jerseyDetailsFragment"
+        android:name="com.example.soccertshirts_app.JerseyDetailsFragment"
+        android:label="Jersey Details"
+        tools:layout="@layout/fragment_jersey_details">
+        <argument
+            android:name="jerseyId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_jerseyDetailsFragment_to_commentsFragment"
+            app:destination="@id/commentsFragment" />
     </fragment>
 
 </navigation>

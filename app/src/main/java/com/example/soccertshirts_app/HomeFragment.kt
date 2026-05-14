@@ -70,6 +70,10 @@ class HomeFragment : Fragment() {
         adapter = JerseyAdapter(
             jerseys = emptyList(),
             currentUserId = currentUserId,
+            onItemClick = { jersey ->
+                val action = HomeFragmentDirections.actionHomeFragmentToJerseyDetailsFragment(jersey.id)
+                findNavController().navigate(action)
+            },
             onEditClick = { jersey ->
                 val action = HomeFragmentDirections.actionHomeFragmentToAddEditJerseyFragment(jersey.id)
                 findNavController().navigate(action)
