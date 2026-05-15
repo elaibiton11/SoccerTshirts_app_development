@@ -2,6 +2,7 @@ package com.example.soccertshirts_app.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.soccertshirts_app.data.model.Comment
 
 @Entity(tableName = "jerseys")
 data class JerseyEntity(
@@ -19,5 +20,6 @@ data class JerseyEntity(
     val createdAt: Long,
     val likesCount: Int,
     val likedBy: List<String>,
-    val commentsCount: Int = 0
+    val commentsCount: Int,
+    val recentComments: List<Comment>
 )
