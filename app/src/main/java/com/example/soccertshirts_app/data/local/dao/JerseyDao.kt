@@ -1,5 +1,6 @@
 package com.example.soccertshirts_app.data.local.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -16,7 +17,7 @@ interface JerseyDao {
     suspend fun insert(jersey: JerseyEntity)
 
     @Query("SELECT * FROM jerseys ORDER BY createdAt DESC")
-    suspend fun getAllJerseys(): List<JerseyEntity>
+    fun getAllJerseys(): LiveData<List<JerseyEntity>>
 
     @Query("DELETE FROM jerseys WHERE id = :id")
     suspend fun deleteById(id: String)
