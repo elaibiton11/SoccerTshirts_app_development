@@ -4,6 +4,7 @@ import com.example.soccertshirts_app.data.local.dao.JerseyDao
 import com.example.soccertshirts_app.data.local.entity.JerseyEntity
 import com.example.soccertshirts_app.data.model.Comment
 import com.example.soccertshirts_app.data.model.Jersey
+import com.example.soccertshirts_app.data.services.FootballApiService
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -12,6 +13,7 @@ import kotlinx.coroutines.tasks.await
 class JerseyRepository(private val jerseyDao: JerseyDao) {
 
     private val db = FirebaseFirestore.getInstance()
+    private val footballApiService = FootballApiService.create()
 
     suspend fun getLocalJerseys(): List<Jersey> {
         return jerseyDao.getAllJerseys().map { it.toModel() }
@@ -25,7 +27,6 @@ class JerseyRepository(private val jerseyDao: JerseyDao) {
         
         val jerseys = snapshot.toObjects(Jersey::class.java)
         
-        // Fetch preview comments and count for each jersey
         val jerseysWithPreviews = jerseys.map { jersey ->
             val commentsSnapshot = db.collection("jerseys").document(jersey.id)
                 .collection("comments")
@@ -51,9 +52,7 @@ class JerseyRepository(private val jerseyDao: JerseyDao) {
     }
 
     suspend fun deleteJersey(jerseyId: String) {
-        // Delete from Firestore
         db.collection("jerseys").document(jerseyId).delete().await()
-        // Delete from Room
         jerseyDao.deleteById(jerseyId)
     }
 
@@ -75,7 +74,6 @@ class JerseyRepository(private val jerseyDao: JerseyDao) {
 
     suspend fun saveJersey(jersey: Jersey) {
         db.collection("jerseys").document(jersey.id).set(jersey).await()
-        // Also update local cache for this specific item
         jerseyDao.insert(jersey.toEntity())
     }
 
@@ -97,7 +95,6 @@ class JerseyRepository(private val jerseyDao: JerseyDao) {
             ).await()
         }
 
-        // Update local cache
         val updatedJersey = getJerseyById(jerseyId)
         if (updatedJersey != null) {
             jerseyDao.insert(updatedJersey.toEntity())
@@ -132,6 +129,26 @@ class JerseyRepository(private val jerseyDao: JerseyDao) {
             document.data
         } catch (e: Exception) {
             null
+        }
+    }
+
+    // --- External API Functions ---
+
+    suspend fun getCountries(): List<String> {
+        return try {
+            val response = footballApiService.getCountries()
+            response.response.map { it.name }.sorted()
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    suspend fun getTeams(country: String): List<String> {
+        return try {
+            val response = footballApiService.getTeams(country)
+            response.response.map { it.team.name }.sorted()
+        } catch (e: Exception) {
+            emptyList()
         }
     }
 

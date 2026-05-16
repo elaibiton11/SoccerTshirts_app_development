@@ -23,7 +23,39 @@ class AddEditJerseyViewModel(private val repository: JerseyRepository) : ViewMod
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
+    private val _countries = MutableLiveData<List<String>>()
+    val countries: LiveData<List<String>> = _countries
+
+    private val _teams = MutableLiveData<List<String>>()
+    val teams: LiveData<List<String>> = _teams
+
     private var existingJersey: Jersey? = null
+
+    init {
+        fetchCountries()
+    }
+
+    private fun fetchCountries() {
+        viewModelScope.launch {
+            try {
+                val list = repository.getCountries()
+                _countries.value = list
+            } catch (e: Exception) {
+                _error.value = "Failed to load countries: ${e.message}"
+            }
+        }
+    }
+
+    fun fetchTeams(country: String) {
+        viewModelScope.launch {
+            try {
+                val list = repository.getTeams(country)
+                _teams.value = list
+            } catch (e: Exception) {
+                _error.value = "Failed to load teams: ${e.message}"
+            }
+        }
+    }
 
     fun loadJersey(jerseyId: String) {
         viewModelScope.launch {
@@ -32,6 +64,9 @@ class AddEditJerseyViewModel(private val repository: JerseyRepository) : ViewMod
                 val jersey = repository.getJerseyById(jerseyId)
                 existingJersey = jersey
                 _jersey.value = jersey
+                if (jersey != null && jersey.country.isNotEmpty()) {
+                    fetchTeams(jersey.country)
+                }
             } catch (e: Exception) {
                 _error.value = "Failed to load jersey: ${e.message}"
             } finally {
@@ -63,7 +98,6 @@ class AddEditJerseyViewModel(private val repository: JerseyRepository) : ViewMod
             try {
                 var imageUrl = existingJersey?.imageUrl ?: ""
                 
-                // If a new image was selected, upload it
                 if (selectedImageUri != null) {
                     val publicId = "jersey_${UUID.randomUUID()}"
                     imageUrl = uploadImage(selectedImageUri, publicId) ?: throw Exception("Image upload failed")
@@ -75,7 +109,6 @@ class AddEditJerseyViewModel(private val repository: JerseyRepository) : ViewMod
                 var ownerName = existingJersey?.ownerName ?: ""
                 var ownerProfileImageUrl = existingJersey?.ownerProfileImageUrl ?: ""
 
-                // Fetch user data from Firestore for new jerseys or if name/profile image is missing
                 if (existingJersey == null || ownerName.isEmpty()) {
                     val userData = repository.getUserData(ownerId)
                     if (userData != null) {
@@ -119,8 +152,8 @@ class AddEditJerseyViewModel(private val repository: JerseyRepository) : ViewMod
         selectedImageUri: Uri?
     ): Boolean {
         if (title.isBlank()) { _error.value = "Title is required"; return false }
-        if (team.isBlank()) { _error.value = "Team is required"; return false }
         if (country.isBlank()) { _error.value = "Country is required"; return false }
+        if (team.isBlank()) { _error.value = "Team is required"; return false }
         if (year == null) { _error.value = "Valid year is required"; return false }
         if (price == null || price <= 0) { _error.value = "Valid price is required"; return false }
         if (description.isBlank()) { _error.value = "Description is required"; return false }
