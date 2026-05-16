@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso
 class JerseyAdapter(
     private var jerseys: List<Jersey>,
     private val currentUserId: String?,
+    private val onItemClick: (Jersey) -> Unit,
     private val onEditClick: (Jersey) -> Unit,
     private val onDeleteClick: (Jersey) -> Unit,
     private val onLikeClick: (Jersey) -> Unit,
@@ -31,11 +32,14 @@ class JerseyAdapter(
     override fun onBindViewHolder(holder: JerseyViewHolder, position: Int) {
         val jersey = jerseys[position]
         holder.binding.apply {
+            root.setOnClickListener { onItemClick(jersey) }
+            
             tvTitle.text = jersey.title
             tvTeam.text = jersey.team
             tvPrice.text = "$${jersey.price}"
             tvOwnerName.text = jersey.ownerName.ifEmpty { "Anonymous" }
             tvLikesCount.text = jersey.likesCount.toString()
+            tvCommentsCount.text = jersey.commentsCount.toString()
 
             // Like status - Heart icon
             val isLiked = currentUserId != null && jersey.likedBy.contains(currentUserId)
@@ -79,19 +83,20 @@ class JerseyAdapter(
                 llActions.visibility = View.GONE
             }
 
-            // Comments Preview
+            // Comments Preview Section
             if (jersey.recentComments.isNotEmpty()) {
                 llCommentsPreview.visibility = View.VISIBLE
                 llCommentsContainer.removeAllViews()
                 
-                jersey.recentComments.forEach { comment ->
+                // Show up to 3 latest comments
+                jersey.recentComments.take(3).forEach { comment ->
                     val textView = TextView(root.context).apply {
                         val spannable = SpannableStringBuilder()
                         spannable.append(comment.username, StyleSpan(Typeface.BOLD), 0)
                         spannable.append(": ${comment.text}")
                         text = spannable
                         textSize = 13f
-                        setPadding(0, 2, 0, 2)
+                        setPadding(0, 2, 0, 4)
                     }
                     llCommentsContainer.addView(textView)
                 }

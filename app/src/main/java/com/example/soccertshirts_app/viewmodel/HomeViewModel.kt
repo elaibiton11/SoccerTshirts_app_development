@@ -8,26 +8,23 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(private val repository: JerseyRepository) : ViewModel() {
 
-    private val _jerseys = MutableLiveData<List<Jersey>>()
-    val jerseys: LiveData<List<Jersey>> = _jerseys
+    val jerseys: LiveData<List<Jersey>> = repository.getLocalJerseys()
 
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> = _errorMessage
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
     fun loadJerseys() {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
-                // Load local cache first
-                val localData = repository.getLocalJerseys()
-                if (localData.isNotEmpty()) {
-                    _jerseys.value = localData
-                }
-
-                // Fetch remote data
-                val remoteData = repository.fetchRemoteJerseys()
-                _jerseys.value = remoteData
+                repository.fetchRemoteJerseys()
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to load jerseys: ${e.message}"
+            } finally {
+                _isLoading.value = false
             }
         }
     }
@@ -36,7 +33,6 @@ class HomeViewModel(private val repository: JerseyRepository) : ViewModel() {
         viewModelScope.launch {
             try {
                 repository.deleteJersey(jersey.id)
-                loadJerseys()
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to delete jersey: ${e.message}"
             }
@@ -48,8 +44,6 @@ class HomeViewModel(private val repository: JerseyRepository) : ViewModel() {
         viewModelScope.launch {
             try {
                 repository.toggleLike(jersey.id, userId)
-                // Refresh data to show updated like status/count
-                loadJerseys()
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to update like: ${e.message}"
             }

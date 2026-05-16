@@ -6,14 +6,6 @@
         <entry key="Firebase Crashlytics">
           <value>
             <InsightsFilterSettings>
-              <option name="connection">
-                <ConnectionSetting>
-                  <option name="appId" value="com.example.soccertshirts_app" />
-                  <option name="mobileSdkAppId" value="1:256109851347:android:ef985214aeeca21fb65a26" />
-                  <option name="projectId" value="soccertshirtsfree" />
-                  <option name="projectNumber" value="256109851347" />
-                </ConnectionSetting>
-              </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
               <option name="timeIntervalDays" value="THIRTY_DAYS" />
               <option name="visibilityType" value="ALL" />
