@@ -6,6 +6,7 @@ data class Jersey(
     val team: String = "",
     val year: Int = 0,
     val price: Double = 0.0,
+    val country: String = "",
     val description: String = "",
     val imageUrl: String = "",
     val ownerId: String = "",

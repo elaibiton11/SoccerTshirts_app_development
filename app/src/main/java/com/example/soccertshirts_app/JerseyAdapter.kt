@@ -33,6 +33,7 @@ class JerseyAdapter(
         holder.binding.apply {
             tvTitle.text = jersey.title
             tvTeam.text = jersey.team
+            tvCountry.text = if (jersey.country.isNotEmpty()) "(${jersey.country})" else ""
             tvPrice.text = "$${jersey.price}"
             tvOwnerName.text = jersey.ownerName.ifEmpty { "Anonymous" }
             tvLikesCount.text = jersey.likesCount.toString()

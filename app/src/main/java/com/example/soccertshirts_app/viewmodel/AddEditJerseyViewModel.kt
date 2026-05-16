@@ -43,6 +43,7 @@ class AddEditJerseyViewModel(private val repository: JerseyRepository) : ViewMod
     fun saveJersey(
         title: String,
         team: String,
+        country: String,
         year: Int?,
         price: Double?,
         description: String,
@@ -55,7 +56,7 @@ class AddEditJerseyViewModel(private val repository: JerseyRepository) : ViewMod
             return
         }
 
-        if (!validate(title, team, year, price, description, selectedImageUri)) return
+        if (!validate(title, team, country, year, price, description, selectedImageUri)) return
 
         viewModelScope.launch {
             _isLoading.value = true
@@ -87,6 +88,7 @@ class AddEditJerseyViewModel(private val repository: JerseyRepository) : ViewMod
                     id = jerseyId,
                     title = title,
                     team = team,
+                    country = country,
                     year = year ?: 0,
                     price = price ?: 0.0,
                     description = description,
@@ -110,6 +112,7 @@ class AddEditJerseyViewModel(private val repository: JerseyRepository) : ViewMod
     private fun validate(
         title: String,
         team: String,
+        country: String,
         year: Int?,
         price: Double?,
         description: String,
@@ -117,6 +120,7 @@ class AddEditJerseyViewModel(private val repository: JerseyRepository) : ViewMod
     ): Boolean {
         if (title.isBlank()) { _error.value = "Title is required"; return false }
         if (team.isBlank()) { _error.value = "Team is required"; return false }
+        if (country.isBlank()) { _error.value = "Country is required"; return false }
         if (year == null) { _error.value = "Valid year is required"; return false }
         if (price == null || price <= 0) { _error.value = "Valid price is required"; return false }
         if (description.isBlank()) { _error.value = "Description is required"; return false }

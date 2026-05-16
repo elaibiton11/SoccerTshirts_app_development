@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -18,6 +19,7 @@ import com.example.soccertshirts_app.databinding.FragmentAddEditJerseyBinding
 import com.example.soccertshirts_app.viewmodel.AddEditJerseyViewModel
 import com.example.soccertshirts_app.viewmodel.AddEditJerseyViewModelFactory
 import com.squareup.picasso.Picasso
+import java.util.Locale
 
 class AddEditJerseyFragment : Fragment() {
 
@@ -32,6 +34,10 @@ class AddEditJerseyFragment : Fragment() {
         val repository = JerseyRepository(jerseyDao)
         AddEditJerseyViewModelFactory(repository)
     }
+
+    private val countries = Locale.getISOCountries().map { 
+        Locale("", it).displayCountry 
+    }.sorted()
 
     private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
@@ -53,6 +59,8 @@ class AddEditJerseyFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         CloudinaryModel.init(requireContext())
 
+        setupCountryDropdown()
+
         val jerseyId = args.jerseyId
         if (!jerseyId.isNullOrEmpty()) {
             viewModel.loadJersey(jerseyId)
@@ -69,14 +77,20 @@ class AddEditJerseyFragment : Fragment() {
         observeViewModel()
     }
 
+    private fun setupCountryDropdown() {
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, countries)
+        binding.actvCountry.setAdapter(adapter)
+    }
+
     private fun saveJersey() {
         val title = binding.etTitle.text.toString().trim()
         val team = binding.etTeam.text.toString().trim()
+        val country = binding.actvCountry.text.toString().trim()
         val year = binding.etYear.text.toString().trim().toIntOrNull()
         val price = binding.etPrice.text.toString().trim().toDoubleOrNull()
         val description = binding.etDescription.text.toString().trim()
 
-        viewModel.saveJersey(title, team, year, price, description, selectedImageUri)
+        viewModel.saveJersey(title, team, country, year, price, description, selectedImageUri)
     }
 
     private fun observeViewModel() {
@@ -84,6 +98,7 @@ class AddEditJerseyFragment : Fragment() {
             jersey?.let {
                 binding.etTitle.setText(it.title)
                 binding.etTeam.setText(it.team)
+                binding.actvCountry.setText(it.country, false)
                 binding.etYear.setText(it.year.toString())
                 binding.etPrice.setText(it.price.toString())
                 binding.etDescription.setText(it.description)
@@ -114,7 +129,6 @@ class AddEditJerseyFragment : Fragment() {
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             binding.btnSave.isEnabled = !isLoading
-            // You could show a progress bar here if you had one in layout
         }
     }
 
