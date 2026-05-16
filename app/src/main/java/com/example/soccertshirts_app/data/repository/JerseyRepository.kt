@@ -10,10 +10,12 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
+import com.example.soccertshirts_app.data.services.FootballApiService
 
 class JerseyRepository(private val jerseyDao: JerseyDao) {
 
     private val db = FirebaseFirestore.getInstance()
+    private val footballApiService = FootballApiService.create()
 
     val allJerseys: LiveData<List<Jersey>> = jerseyDao.getAllJerseys().map { entities ->
         entities.map { it.toModel() }
@@ -105,6 +107,26 @@ class JerseyRepository(private val jerseyDao: JerseyDao) {
 
     suspend fun getUserData(uid: String): Map<String, Any>? {
         return db.collection("users").document(uid).get().await().data
+    }
+
+    // --- External API Functions ---
+
+    suspend fun getCountries(): List<String> {
+        return try {
+            val response = footballApiService.getCountries()
+            response.response.map { it.name }.sorted()
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    suspend fun getTeams(country: String): List<String> {
+        return try {
+            val response = footballApiService.getTeams(country)
+            response.response.map { it.team.name }.sorted()
+        } catch (e: Exception) {
+            emptyList()
+        }
     }
 
     suspend fun getComments(jerseyId: String): List<Comment> {

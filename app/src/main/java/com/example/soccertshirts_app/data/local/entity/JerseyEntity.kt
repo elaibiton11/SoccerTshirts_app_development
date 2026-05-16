@@ -12,6 +12,7 @@ data class JerseyEntity(
     val team: String,
     val year: Int,
     val price: Double,
+    val country: String = "",
     val description: String,
     val imageUrl: String,
     val ownerId: String,
