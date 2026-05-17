@@ -8,7 +8,17 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(private val repository: JerseyRepository) : ViewModel() {
 
-    val jerseys: LiveData<List<Jersey>> = repository.getLocalJerseys()
+    private val _allJerseys = repository.getLocalJerseys()
+    private val _searchQuery = MutableLiveData<String>("")
+
+    val jerseys: LiveData<List<Jersey>> = MediatorLiveData<List<Jersey>>().apply {
+        addSource(_allJerseys) { jerseys ->
+            value = filterJerseys(jerseys, _searchQuery.value ?: "")
+        }
+        addSource(_searchQuery) { query ->
+            value = filterJerseys(_allJerseys.value ?: emptyList(), query)
+        }
+    }
 
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> = _errorMessage
@@ -26,6 +36,20 @@ class HomeViewModel(private val repository: JerseyRepository) : ViewModel() {
             } finally {
                 _isLoading.value = false
             }
+        }
+    }
+
+    fun setSearchQuery(query: String) {
+        _searchQuery.value = query
+    }
+
+    private fun filterJerseys(list: List<Jersey>, query: String): List<Jersey> {
+        if (query.isBlank()) return list
+        val lowerQuery = query.lowercase()
+        return list.filter {
+            it.title.lowercase().contains(lowerQuery) ||
+            it.team.lowercase().contains(lowerQuery) ||
+            it.description.lowercase().contains(lowerQuery)
         }
     }
 
