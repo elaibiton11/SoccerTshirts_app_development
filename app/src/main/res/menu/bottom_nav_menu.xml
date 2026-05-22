@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/navigation_home"
+        android:id="@id/homeFragment"
         android:icon="@drawable/ic_home_24"
         android:title="@string/menu_home" />
     <item
-        android:id="@+id/navigation_favorites"
+        android:id="@id/addEditJerseyFragment"
         android:icon="@drawable/ic_favorite_24"
         android:title="@string/menu_favorites" />
     <item
-        android:id="@+id/navigation_cart"
-        android:icon="@drawable/ic_shopping_cart_24"
+        android:id="@+id/navigation_logout"
+        android:icon="@drawable/ic_logout_24"
         android:title="@string/menu_cart" />
     <item
-        android:id="@+id/navigation_profile"
+        android:id="@id/profileFragment"
         android:icon="@drawable/ic_person_24"
         android:title="@string/menu_profile" />
 </menu>
-
