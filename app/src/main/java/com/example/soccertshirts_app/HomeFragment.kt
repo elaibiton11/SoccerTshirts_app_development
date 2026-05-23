@@ -54,17 +54,6 @@ class HomeFragment : Fragment() {
         
         homeViewModel.loadJerseys()
 
-        binding.btnAddJersey.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_addEditJerseyFragment)
-        }
-
-        binding.btnProfile.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_profileFragment)
-        }
-
-        binding.btnLogout.setOnClickListener {
-            authViewModel.logout()
-        }
     }
 
     private fun setupSearchView() {

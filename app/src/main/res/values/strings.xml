@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">SoccerTshirts_app</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_favorites">Favorites</string>
+    <string name="menu_cart">Cart</string>
+    <string name="menu_profile">Profile</string>
 </resources>
