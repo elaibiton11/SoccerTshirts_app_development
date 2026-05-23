@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">SoccerTshirts_app</string>
+    <string name="login_hint_email">Email</string>
+    <string name="login_hint_password">Password</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="sign_in">Sign In</string>
+    <string name="no_account_text">Don\'t have an account?</string>
+    <string name="register_text">Register</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_favorites">Favorites</string>
+    <string name="menu_cart">Cart</string>
+    <string name="menu_profile">Profile</string>
 </resources>
