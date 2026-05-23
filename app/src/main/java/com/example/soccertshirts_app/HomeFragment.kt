@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -48,21 +49,25 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
+        setupSearchView()
         observeViewModels()
         
         homeViewModel.loadJerseys()
 
-        binding.btnAddJersey.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_addEditJerseyFragment)
-        }
+    }
 
-        binding.btnProfile.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_profileFragment)
-        }
+    private fun setupSearchView() {
+        binding.svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                homeViewModel.setSearchQuery(query ?: "")
+                return true
+            }
 
-        binding.btnLogout.setOnClickListener {
-            authViewModel.logout()
-        }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                homeViewModel.setSearchQuery(newText ?: "")
+                return true
+            }
+        })
     }
 
     private fun setupRecyclerView() {
