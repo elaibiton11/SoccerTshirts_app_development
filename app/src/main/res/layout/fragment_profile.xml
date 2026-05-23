@@ -4,70 +4,138 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:background="@android:color/white">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:gravity="center_horizontal">
+        android:padding="24dp">
 
-        <ImageView
-            android:id="@+id/iv_profile_image"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+        <!-- Profile Image Container -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_profile_image"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
             android:layout_marginTop="16dp"
-            android:scaleType="centerCrop"
-            android:src="@android:drawable/ic_menu_gallery"
-            android:background="@android:color/darker_gray" />
+            app:cardCornerRadius="70dp"
+            app:cardElevation="6dp"
+            app:strokeColor="#F5F5F5"
+            app:strokeWidth="2dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-        <Button
+            <ImageView
+                android:id="@+id/iv_profile_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#F1F3F4"
+                android:scaleType="centerCrop"
+                android:src="@android:drawable/ic_menu_gallery"
+                android:contentDescription="Profile Picture" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Change Photo Button -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_select_profile_image"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Change Photo"
-            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+            android:textColor="#D81B1B"
+            android:textAllCaps="false"
+            app:layout_constraintTop_toBottomOf="@id/card_profile_image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <EditText
-            android:id="@+id/et_profile_username"
+        <!-- Username TextInputLayout -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_profile_username"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:hint="Username"
-            android:inputType="textPersonName" />
+            app:boxStrokeColor="@android:color/black"
+            app:hintTextColor="@android:color/black"
+            app:startIconDrawable="@android:drawable/ic_menu_myplaces"
+            app:startIconTint="@android:color/black"
+            app:layout_constraintTop_toBottomOf="@id/btn_select_profile_image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-        <Button
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_profile_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:textColor="@android:color/black" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Save Button -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_save_profile"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Save Profile" />
+            android:layout_height="56dp"
+            android:layout_marginTop="20dp"
+            android:text="Save Profile"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:backgroundTint="#D81B1B"
+            android:textColor="@android:color/white"
+            app:cornerRadius="12dp"
+            app:elevation="4dp"
+            app:layout_constraintTop_toBottomOf="@id/til_profile_username"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- Loading Indicator -->
         <ProgressBar
             android:id="@+id/pb_profile_loading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:visibility="gone" />
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            android:indeterminateTint="#D81B1B"
+            app:layout_constraintTop_toBottomOf="@id/btn_save_profile"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <!-- Divider -->
+        <View
+            android:id="@+id/profile_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
             android:layout_marginTop="32dp"
-            android:layout_gravity="start"
-            android:text="My Jerseys"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:background="#EEEEEE"
+            app:layout_constraintTop_toBottomOf="@id/btn_save_profile" />
 
+        <!-- My Jerseys Header -->
+        <TextView
+            android:id="@+id/tv_my_jerseys_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="My Jerseys"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            app:layout_constraintTop_toBottomOf="@id/profile_divider"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Jerseys RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_my_jerseys"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:nestedScrollingEnabled="false"
+            app:layout_constraintTop_toBottomOf="@id/tv_my_jerseys_header"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             tools:listitem="@layout/item_jersey" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
