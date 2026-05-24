@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layoutDirection="ltr"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    android:fitsSystemWindows="true">
 
     <!-- Profile Navbar -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/navbar"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="64dp"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="0dp"
         app:cardElevation="4dp"
@@ -22,16 +22,41 @@
             android:layout_height="match_parent"
             android:paddingHorizontal="16dp">
 
-            <!-- Small Logo like in the image -->
             <ImageView
                 android:id="@+id/iv_navbar_logo"
-                android:layout_width="130dp"
-                android:layout_height="100dp"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:scaleType="centerInside"
                 android:src="@drawable/login_logo"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="My Profile"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/ib_logout"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Logout"
+                android:padding="12dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_logout_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@android:color/black" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -169,7 +194,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/ll_grid_toggle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintWidth_percent="0.33" />
+                app:layout_constraintWidth_percent="1.0" />
 
             <!-- Jerseys Grid (Instagram Style) -->
             <androidx.recyclerview.widget.RecyclerView

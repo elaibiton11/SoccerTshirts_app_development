@@ -54,6 +54,10 @@ class HomeFragment : Fragment() {
         
         homeViewModel.loadJerseys()
 
+        // Handle Logout from the custom header
+        binding.ibLogout.setOnClickListener {
+            (activity as? MainActivity)?.performLogout()
+        }
     }
 
     private fun setupSearchView() {

@@ -4,69 +4,76 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layoutDirection="ltr"
-    android:padding="16dp">
+    android:background="#F5F5F5"
+    android:fitsSystemWindows="true">
 
-    <!-- Navbar Container changed to ConstraintLayout for relative positioning -->
+    <!-- Compact Navbar Header -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/navbar_container"
         android:layout_width="0dp"
         android:layout_height="64dp"
         android:background="@color/white"
         android:elevation="4dp"
-        android:paddingHorizontal="16dp"
+        android:paddingHorizontal="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Search View: Now anchored to the LEFT edge -->
+        <!-- Compact Search View (Left) -->
         <androidx.appcompat.widget.SearchView
             android:id="@+id/sv_search"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="40dp"
-            app:layout_constraintWidth_max="220dp"
             android:background="@drawable/search_view_bg"
-            app:iconifiedByDefault="true"
+            app:iconifiedByDefault="false"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/iv_navbar_logo"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.5"
             app:queryHint="Search..." />
 
-        <!-- Logo: Now anchored to the RIGHT edge -->
+        <!-- Logo/Title (Middle-ish) -->
         <ImageView
             android:id="@+id/iv_navbar_logo"
-            android:layout_width="100dp"
-            android:layout_height="60dp"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ib_logout"
+            app:layout_constraintStart_toEndOf="@id/sv_search"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/login_logo" />
 
+        <!-- Logout Button (Right) -->
+        <ImageButton
+            android:id="@+id/ib_logout"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Logout"
+            android:padding="12dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_logout_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@android:color/black" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-    <TextView
-        android:id="@+id/tv_home_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Home Fragment"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
+    <!-- Main Feed -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_jerseys"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+        android:clipToPadding="false"
+        android:paddingBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_home_title"
+        app:layout_constraintTop_toBottomOf="@id/navbar_container"
         tools:listitem="@layout/item_jersey" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
