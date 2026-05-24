@@ -1,14 +1,14 @@
 package com.example.soccertshirts_app
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavOptions
-import androidx.navigation.findNavController
-import androidx.navigation.ui.NavigationUI
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import com.example.soccertshirts_app.data.repository.AuthRepository
 import com.example.soccertshirts_app.databinding.ActivityMainBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import android.view.MenuItem
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,51 +19,68 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Wire BottomNavigationView to NavController
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
-        // Get NavController from the NavHostFragment directly (safer during initial setup)
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? androidx.navigation.fragment.NavHostFragment
-        val navController = navHostFragment?.navController
-        if (navController != null) {
-            NavigationUI.setupWithNavController(bottomNav, navController)
-        } else {
-            // Fallback: try activity-based lookup (may still fail if fragment isn't attached yet)
-            try {
-                val fallback = findNavController(R.id.nav_host_fragment)
-                NavigationUI.setupWithNavController(bottomNav, fallback)
-            } catch (e: Exception) {
-                // Log the issue; avoid crashing the activity on startup
-                e.printStackTrace()
-            }
-        }
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
 
-        // Intercept BottomNavigation selections so we can handle logout specially
-        bottomNav.setOnItemSelectedListener { menuItem: MenuItem ->
-            // Determine a nav controller to use
-            val nc = navController ?: try {
-                findNavController(R.id.nav_host_fragment)
-            } catch (e: Exception) {
-                null
-            }
+        // Setup Top Toolbar
+        setSupportActionBar(binding.toolbar)
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(R.id.homeFragment, R.id.profileFragment, R.id.welcomeFragment)
+        )
+        binding.toolbar.setupWithNavController(navController, appBarConfiguration)
 
-            when (menuItem.itemId) {
-                R.id.navigation_logout -> {
-                    // Perform logout via repository (keeps existing functionality intact)
-                    AuthRepository().logout()
-                    // Navigate to welcomeFragment and clear back stack
-                    nc?.navigate(R.id.welcomeFragment, null, NavOptions.Builder().setPopUpTo(R.id.nav_graph, true).build())
+        // Setup Bottom Navigation
+        binding.bottomNav.setupWithNavController(navController)
+
+        // Handle Toolbar Menu (Logout for Profile or other screens)
+        binding.toolbar.inflateMenu(R.menu.top_app_bar_menu)
+        binding.toolbar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_logout -> {
+                    performLogout()
                     true
                 }
+                else -> false
+            }
+        }
+
+        // Manage visibility of navigation bars
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.welcomeFragment, R.id.loginFragment, R.id.registerFragment -> {
+                    binding.bottomNav.visibility = View.GONE
+                    binding.appBarLayout.visibility = View.GONE
+                }
+                // Hide global AppBarLayout for main app screens to use custom/clean headers
+                R.id.homeFragment, R.id.profileFragment, R.id.addEditJerseyFragment -> {
+                    binding.bottomNav.visibility = View.VISIBLE
+                    binding.appBarLayout.visibility = View.GONE
+                }
                 else -> {
-                    // Delegate navigation for other items (home, add/edit, profile)
-                    if (nc != null) {
-                        NavigationUI.onNavDestinationSelected(menuItem, nc)
-                        true
-                    } else {
-                        false
-                    }
+                    // Show global toolbar for sub-screens like Details and Comments
+                    binding.bottomNav.visibility = View.VISIBLE
+                    binding.appBarLayout.visibility = View.VISIBLE
+                    binding.toolbar.visibility = View.VISIBLE
+                    
+                    // Hide logout by default on sub-screens
+                    binding.toolbar.menu.findItem(R.id.action_logout)?.isVisible = false
                 }
             }
         }
+    }
+
+    fun performLogout() {
+        AuthRepository().logout()
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+        navController.navigate(
+            R.id.welcomeFragment,
+            null,
+            NavOptions.Builder()
+                .setPopUpTo(R.id.nav_graph, true)
+                .build()
+        )
     }
 }

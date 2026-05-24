@@ -66,6 +66,11 @@ class ProfileFragment : Fragment() {
             val username = binding.etProfileUsername.text.toString().trim()
             viewModel.updateProfile(username, selectedImageUri)
         }
+
+        // Handle Logout from the custom header
+        binding.ibLogout.setOnClickListener {
+            (activity as? MainActivity)?.performLogout()
+        }
     }
 
     private fun setupRecyclerView() {
@@ -99,7 +104,10 @@ class ProfileFragment : Fragment() {
     private fun observeViewModel() {
         viewModel.profile.observe(viewLifecycleOwner) { profile ->
             profile?.let {
-                binding.etProfileUsername.setText(it.username)
+                if (binding.etProfileUsername.text.toString() != it.username) {
+                    binding.etProfileUsername.setText(it.username)
+                }
+                
                 if (it.profileImageUrl.isNotEmpty()) {
                     Picasso.get()
                         .load(it.profileImageUrl)
@@ -120,6 +128,7 @@ class ProfileFragment : Fragment() {
             binding.pbProfileLoading.visibility = if (isLoading) View.VISIBLE else View.GONE
             binding.btnSaveProfile.isEnabled = !isLoading
             binding.btnSelectProfileImage.isEnabled = !isLoading
+            binding.etProfileUsername.isEnabled = !isLoading
         }
 
         viewModel.isUpdated.observe(viewLifecycleOwner) { isUpdated ->
