@@ -1,4 +1,4 @@
-package com.example.soccertshirts_app
+package com.example.soccertshirts_app.adapters
 
 import android.graphics.Typeface
 import android.text.SpannableStringBuilder
@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.soccertshirts_app.R
 import com.example.soccertshirts_app.data.model.Jersey
 import com.example.soccertshirts_app.databinding.ItemJerseyBinding
 import com.squareup.picasso.Picasso

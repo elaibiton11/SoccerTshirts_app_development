@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/welcomeFragment"
-        android:name="com.example.soccertshirts_app.WelcomeFragment"
+        android:name="com.example.soccertshirts_app.fragments.WelcomeFragment"
         android:label="Welcome"
         tools:layout="@layout/fragment_welcome">
         <action
@@ -25,7 +25,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.soccertshirts_app.LoginFragment"
+        android:name="com.example.soccertshirts_app.fragments.LoginFragment"
         android:label="Login"
         tools:layout="@layout/fragment_login">
         <action
@@ -37,7 +37,7 @@
 
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.example.soccertshirts_app.RegisterFragment"
+        android:name="com.example.soccertshirts_app.fragments.RegisterFragment"
         android:label="Register"
         tools:layout="@layout/fragment_register">
         <action
@@ -49,7 +49,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.soccertshirts_app.HomeFragment"
+        android:name="com.example.soccertshirts_app.fragments.HomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home">
         <action
@@ -73,7 +73,7 @@
 
     <fragment
         android:id="@+id/addEditJerseyFragment"
-        android:name="com.example.soccertshirts_app.AddEditJerseyFragment"
+        android:name="com.example.soccertshirts_app.fragments.AddEditJerseyFragment"
         android:label="Add/Edit Jersey"
         tools:layout="@layout/fragment_add_edit_jersey">
         <argument
@@ -85,7 +85,7 @@
 
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.soccertshirts_app.ProfileFragment"
+        android:name="com.example.soccertshirts_app.fragments.ProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_profile">
         <action
@@ -101,7 +101,7 @@
 
     <fragment
         android:id="@+id/commentsFragment"
-        android:name="com.example.soccertshirts_app.CommentsFragment"
+        android:name="com.example.soccertshirts_app.fragments.CommentsFragment"
         android:label="Comments"
         tools:layout="@layout/fragment_comments">
         <argument
@@ -111,7 +111,7 @@
 
     <fragment
         android:id="@+id/jerseyDetailsFragment"
-        android:name="com.example.soccertshirts_app.JerseyDetailsFragment"
+        android:name="com.example.soccertshirts_app.fragments.JerseyDetailsFragment"
         android:label="Jersey Details"
         tools:layout="@layout/fragment_jersey_details">
         <argument
