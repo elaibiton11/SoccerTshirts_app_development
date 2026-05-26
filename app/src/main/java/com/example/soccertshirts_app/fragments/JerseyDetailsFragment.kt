@@ -1,4 +1,4 @@
-package com.example.soccertshirts_app
+package com.example.soccertshirts_app.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
+import com.example.soccertshirts_app.R
 import com.example.soccertshirts_app.data.local.AppDatabase
 import com.example.soccertshirts_app.data.repository.AuthRepository
 import com.example.soccertshirts_app.data.repository.JerseyRepository
@@ -22,11 +22,16 @@ class JerseyDetailsFragment : Fragment() {
     private var _binding: FragmentJerseyDetailsBinding? = null
     private val binding get() = _binding!!
 
-    private val args: JerseyDetailsFragmentArgs by navArgs()
+    private var jerseyId: String? = null
     
     private val viewModel: JerseyDetailsViewModel by viewModels {
         val jerseyDao = AppDatabase.getDatabase(requireContext()).jerseyDao()
         JerseyDetailsViewModelFactory(AuthRepository(), JerseyRepository(jerseyDao))
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        jerseyId = arguments?.getString("jerseyId")
     }
 
     override fun onCreateView(
@@ -41,16 +46,19 @@ class JerseyDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (jerseyId != null) {
+            viewModel.loadJerseyDetails(jerseyId!!)
+        }
+
         observeViewModel()
-        viewModel.loadJerseyDetails(args.jerseyId)
 
         binding.ibDetailsLike.setOnClickListener {
             viewModel.toggleLike()
         }
 
         binding.ibDetailsComment.setOnClickListener {
-            val action = JerseyDetailsFragmentDirections.actionJerseyDetailsFragmentToCommentsFragment(args.jerseyId)
-            findNavController().navigate(action)
+            val bundle = Bundle().apply { putString("jerseyId", jerseyId) }
+            findNavController().navigate(R.id.action_jerseyDetailsFragment_to_commentsFragment, bundle)
         }
     }
 

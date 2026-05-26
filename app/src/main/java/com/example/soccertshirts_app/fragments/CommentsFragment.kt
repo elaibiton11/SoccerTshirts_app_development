@@ -1,4 +1,4 @@
-package com.example.soccertshirts_app
+package com.example.soccertshirts_app.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,8 +7,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.soccertshirts_app.R
+import com.example.soccertshirts_app.adapters.CommentAdapter
 import com.example.soccertshirts_app.data.local.AppDatabase
 import com.example.soccertshirts_app.data.repository.AuthRepository
 import com.example.soccertshirts_app.data.repository.JerseyRepository
@@ -21,7 +22,7 @@ class CommentsFragment : Fragment() {
     private var _binding: FragmentCommentsBinding? = null
     private val binding get() = _binding!!
 
-    private val args: CommentsFragmentArgs by navArgs()
+    private var jerseyId: String? = null
     
     private val viewModel: CommentsViewModel by viewModels {
         val jerseyDao = AppDatabase.getDatabase(requireContext()).jerseyDao()
@@ -29,6 +30,11 @@ class CommentsFragment : Fragment() {
     }
 
     private lateinit var adapter: CommentAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        jerseyId = arguments?.getString("jerseyId")
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,15 +48,20 @@ class CommentsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (jerseyId == null) {
+            Toast.makeText(requireContext(), "Error: Jersey ID missing", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         setupRecyclerView()
         observeViewModel()
 
-        viewModel.loadComments(args.jerseyId)
+        viewModel.loadComments(jerseyId!!)
 
         binding.btnSendComment.setOnClickListener {
             val text = binding.etCommentText.text.toString().trim()
             if (text.isNotEmpty()) {
-                viewModel.addComment(args.jerseyId, text)
+                viewModel.addComment(jerseyId!!, text)
             } else {
                 Toast.makeText(requireContext(), "Comment cannot be empty", Toast.LENGTH_SHORT).show()
             }

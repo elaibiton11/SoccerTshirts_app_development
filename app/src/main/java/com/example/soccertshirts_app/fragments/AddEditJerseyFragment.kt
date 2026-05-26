@@ -1,4 +1,4 @@
-package com.example.soccertshirts_app
+package com.example.soccertshirts_app.fragments
 
 import android.net.Uri
 import android.os.Bundle
@@ -11,7 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
+import com.example.soccertshirts_app.R
 import com.example.soccertshirts_app.data.local.AppDatabase
 import com.example.soccertshirts_app.data.repository.JerseyRepository
 import com.example.soccertshirts_app.data.services.CloudinaryModel
@@ -25,7 +25,7 @@ class AddEditJerseyFragment : Fragment() {
     private var _binding: FragmentAddEditJerseyBinding? = null
     private val binding get() = _binding!!
     
-    private val args: AddEditJerseyFragmentArgs by navArgs()
+    private var jerseyId: String? = null
     private var selectedImageUri: Uri? = null
 
     private val viewModel: AddEditJerseyViewModel by viewModels {
@@ -41,6 +41,11 @@ class AddEditJerseyFragment : Fragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        jerseyId = arguments?.getString("jerseyId")
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -54,9 +59,8 @@ class AddEditJerseyFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         CloudinaryModel.init(requireContext())
 
-        val jerseyId = args.jerseyId
         if (!jerseyId.isNullOrEmpty()) {
-            viewModel.loadJersey(jerseyId)
+            viewModel.loadJersey(jerseyId!!)
         } else {
             // Set default country for new jersey
             val defaultCountry = "England"

@@ -1,4 +1,4 @@
-package com.example.soccertshirts_app
+package com.example.soccertshirts_app.fragments
 
 import android.net.Uri
 import android.os.Bundle
@@ -11,6 +11,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.soccertshirts_app.MainActivity
+import com.example.soccertshirts_app.R
+import com.example.soccertshirts_app.adapters.JerseyAdapter
 import com.example.soccertshirts_app.data.local.AppDatabase
 import com.example.soccertshirts_app.data.repository.AuthRepository
 import com.example.soccertshirts_app.data.repository.JerseyRepository
@@ -79,12 +82,12 @@ class ProfileFragment : Fragment() {
             jerseys = emptyList(),
             currentUserId = currentUserId,
             onItemClick = { jersey ->
-                val action = ProfileFragmentDirections.actionProfileFragmentToJerseyDetailsFragment(jersey.id)
-                findNavController().navigate(action)
+                val bundle = Bundle().apply { putString("jerseyId", jersey.id) }
+                findNavController().navigate(R.id.action_profileFragment_to_jerseyDetailsFragment, bundle)
             },
             onEditClick = { jersey ->
-                val action = ProfileFragmentDirections.actionProfileFragmentToAddEditJerseyFragment(jersey.id)
-                findNavController().navigate(action)
+                val bundle = Bundle().apply { putString("jerseyId", jersey.id) }
+                findNavController().navigate(R.id.action_profileFragment_to_addEditJerseyFragment, bundle)
             },
             onDeleteClick = { jersey ->
                 Toast.makeText(context, "Use Home screen to delete jerseys", Toast.LENGTH_SHORT).show()
@@ -93,8 +96,8 @@ class ProfileFragment : Fragment() {
                 viewModel.toggleLike(jersey)
             },
             onCommentClick = { jersey ->
-                val action = ProfileFragmentDirections.actionProfileFragmentToCommentsFragment(jersey.id)
-                findNavController().navigate(action)
+                val bundle = Bundle().apply { putString("jerseyId", jersey.id) }
+                findNavController().navigate(R.id.action_profileFragment_to_commentsFragment, bundle)
             }
         )
         binding.rvMyJerseys.layoutManager = LinearLayoutManager(requireContext())

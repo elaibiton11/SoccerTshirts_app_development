@@ -1,4 +1,4 @@
-package com.example.soccertshirts_app
+package com.example.soccertshirts_app.adapters
 
 import android.text.format.DateUtils
 import android.view.LayoutInflater
